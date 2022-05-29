@@ -24,7 +24,10 @@ def app():
         st.info("Search for a movie title to get recommendations based on what similar users liked!")
         st.stop()
     
-    movie_id = e.search(search_term, movies).iloc[0,0]
+    search_results = e.search(search_term, movies)
+    movie_id = search_results.iloc[0,0]
+    st.info("The movie we found using your search term:")
+    st.write(search_results.head(1)[['cleaned_title', 'genres', 'similarity']])
     results = e.find_similar_movies(movies, ratings, movie_id)
     st.success(f"Recommendations for you that are similar to {search_term}")
     st.table(results)

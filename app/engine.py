@@ -20,12 +20,11 @@ def search(title: str, movies: pd.DataFrame) -> pd.DataFrame:
     query_vec = vectorizer.transform([title])
     # returns how similar search title is to each title
     similarity = cosine_similarity(query_vec, tfidf).flatten()
-    movies_cp = movies.copy()
     # find the 5 most similar titles by idx, in asc order
     # kinda like df['col'].sort_values(ascending=False).loc[:-5]
     indices = np.argpartition(similarity, -5)[-5:]
-    movies_cp['similarity'] = similarity
-    results = movies_cp.iloc[indices][::-1] # return with most similar up top
+    movies['similarity'] = similarity
+    results = movies.iloc[indices].sort_values('similarity', ascending=False) # return with most similar up top
     return results
 
 
