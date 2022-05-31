@@ -19,12 +19,18 @@ def load_ratings_dataset() -> pd.DataFrame:
 def get_user_input(movies_df: pd.DataFrame) -> Tuple[str, list, bool]:
     ph = st.container()
     with st.form('user_input'):
-        user_term = st.text_input("Search for a movie", value='toy story').title()
+        user_term = st.text_input("Search for a movie", 
+                                  value='toy story', 
+                                  help='We will base our recommendations off of this movie').title()
         unique_genres = h.find_unique_genres(movies_df)
         unique_genres = ["Any genre is fine"] + unique_genres
-        user_genre_list = st.multiselect("What genres would you like to watch?", options=unique_genres, default='Any genre is fine')
+        user_genre_list = st.multiselect("What genres would you like to watch?", 
+                                         options=unique_genres, 
+                                         default='Any genre is fine',
+                                         help='Find movies that belong to any or all of these genres')
         
-        use_all_genres = st.checkbox("Resulting movies should belong to all selected genres")
+        use_all_genres = st.checkbox("Resulting movies should belong to all selected genres", 
+                                     help='If unchecked, will recommend movies that belong to at least one of the selected genres')
         submit = st.form_submit_button('Submit')
 
     if "Any genre is fine" in user_genre_list:
