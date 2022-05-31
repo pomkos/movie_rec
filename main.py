@@ -82,7 +82,8 @@ def show_results(results: pd.DataFrame, all_movies: pd.DataFrame, ratings: pd.Da
         results['genres'] = results['genres'].apply(h.extract_string, terms_to_extract=user_genre_list)
     
     results = h.add_average_ratings_col(results, ratings).drop('movieId', axis=1)
-    st.table(results.set_index('title')[['genres', 'avg_rating', 'score']])
+    results['perc_similar'] = results['score'] / results['score'].max()
+    st.table(results.set_index('title')[['genres', 'avg_rating', 'perc_similar']])
 
 if __name__ == "__main__":
     app()
