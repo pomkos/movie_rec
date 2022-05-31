@@ -56,4 +56,4 @@ def find_similar_movies(movies: pd.DataFrame, ratings: pd.DataFrame, movie_id: i
     rec_percentages = rec_percentages.sort_values('score', ascending=False)
     
     # left_index is the movieId
-    return rec_percentages.head(10).merge(movies, left_index=True, right_on='movieId')[['score','title','genres']]
+    return rec_percentages.head(10).merge(movies, left_index=True, right_on='movieId')[['movieId', 'score','title','genres']]

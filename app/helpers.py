@@ -3,6 +3,13 @@ import pandas as pd
 import sqlalchemy as sq
 from typing import List, Literal
 
+
+def add_average_ratings_col(results_df: pd.DataFrame, ratings_df: pd.DataFrame) -> pd.DataFrame:
+    results_movieId = list(results_df['movieId'].unique())
+    avg_ratings = ratings_df[ratings_df['movieId'].isin(results_movieId)].groupby('movieId').mean().reset_index()
+    avg_ratings = avg_ratings.rename({'rating':'avg_rating'}, axis=1)
+    return results_df.merge(avg_ratings[['movieId', 'avg_rating']])
+
 def clean_title(title: str) -> str:
     '''
     Keeps only letters, numbers, whitespaces. 
@@ -39,7 +46,7 @@ def extract_string(my_string: str, terms_to_extract: List[str]) -> str:
     my_list = my_string.split('|')
     for term in terms_to_extract:
         if term.strip() in my_list:
-            new_string += f"{term.strip()} "
+            new_string += f"{term.strip()} | "
     return new_string
 
 def check_genre_exists(value: str, genre_list: List[str], use_all_genres: bool) -> bool:
