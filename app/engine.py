@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+
 from app import helpers as h
 
 from sklearn.metrics.pairwise import cosine_similarity
@@ -31,6 +32,7 @@ def search(title: str, movies: pd.DataFrame) -> pd.DataFrame:
 def find_similar_movies(movies: pd.DataFrame, ratings: pd.DataFrame, movie_id: int, high_rating: int = 4) -> pd.DataFrame:
     # find the users that liked the movie being searched for
     similar_users = ratings[(ratings["movieId"] == movie_id) & (ratings['rating']>=high_rating)]['userId'].unique()
+
     # find the movies that similar users liked
     similar_user_recs = ratings[(ratings['userId'].isin(similar_users)) & (ratings['rating']>=high_rating)]['movieId']
 
