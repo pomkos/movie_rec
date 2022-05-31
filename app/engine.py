@@ -35,8 +35,9 @@ def find_similar_users_movies(ratings_df: pd.DataFrame, movie_id: int, high_rati
     # find the movies that similar users liked
     similar_user_recs = ratings_df[(ratings_df['userId'].isin(similar_users)) & (ratings_df['rating']>=high_rating)]['movieId']
 
-    # find the top 10% of movies
+    # percent of similar users who liked the movies
     similar_user_recs = similar_user_recs.value_counts() / len(similar_users)
+    # get only the movies where at least 10% of similar users liked
     similar_user_recs = similar_user_recs[similar_user_recs > 0.1]
 
     return similar_user_recs
@@ -44,14 +45,16 @@ def find_similar_users_movies(ratings_df: pd.DataFrame, movie_id: int, high_rati
 def find_similar_movies(movies: pd.DataFrame, ratings: pd.DataFrame, movie_id: int, high_rating: int = 4) -> pd.DataFrame:
     similar_user_recs = find_similar_users_movies(ratings, movie_id, high_rating)
     
-    # all users who watched the movie recommended to us
+    # all users who watched movies that similar_users watched, and rated them high
     all_users_who_watched_movie = ratings[(ratings['movieId'].isin(similar_user_recs.index))]
+    # percent of all users who liked the movies
     all_user_recs = all_users_who_watched_movie['movieId'].value_counts()/len(all_users_who_watched_movie['userId'].unique())
     
     rec_percentages = pd.concat([similar_user_recs, all_user_recs], axis=1)
     rec_percentages.columns = ['similar_ppl','all_ppl']
 
     # score = ratio of similar:avg users who liked movie
+    # Ex: 4 times as many similar_users liked movieId 1 than all_users
     rec_percentages['score'] = rec_percentages['similar_ppl'] / rec_percentages['all_ppl']
     rec_percentages = rec_percentages.sort_values('score', ascending=False)
     
