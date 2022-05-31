@@ -49,7 +49,7 @@ def app():
     user_term, user_genre_list, use_all_genres = get_user_input(movies)
     
     search_results = e.search(user_term, movies)
-    found_term = search_results.iloc[0, 1] # the title that we found in db based on search term, for user info only
+    movie_title_similar_to_search_term = search_results.iloc[0, 1] # the title that we found in db based on search term, for user info only
     movie_id = search_results.iloc[0,0] # user's movieId, used to find similar movies
 
     st.info("The movie we found using your search term:")
@@ -60,11 +60,14 @@ def app():
 
     if results.empty:
         movies = movies[movies['genres'].apply(h.check_genre_exists, genre_list=user_genre_list, use_all_genres=use_all_genres)]
+        movies['genres'] = movies['genres'].apply(h.bold_part_of_string, terms_to_bold=user_genre_list)
         st.info("No similar movies found but here's a random sample of movies that belong to your chosen genres")
     else:
         # filter by user's preferred genre(s)
         results = results[results['genres'].apply(h.check_genre_exists, genre_list=user_genre_list, use_all_genres=use_all_genres)]
-        st.success(f"Recommendations for you that are similar to {found_term}")
+        if use_all_genres == False:
+            results['genres'] = results['genres'].apply(h.extract_string, terms_to_extract=user_genre_list)
+        st.success(f"Recommendations for you that are similar to {movie_title_similar_to_search_term}")
         st.table(results)
 
 if __name__ == "__main__":

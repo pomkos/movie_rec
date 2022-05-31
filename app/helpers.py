@@ -34,6 +34,14 @@ def load_data(table_name: str) -> pd.DataFrame:
         return pd.read_sql(table_name, cnx)
 
 
+def extract_string(my_string: str, terms_to_extract: List[str]) -> str:
+    new_string = ''
+    my_list = my_string.split('|')
+    for term in terms_to_extract:
+        if term.strip() in my_list:
+            new_string += f"{term.strip()} "
+    return new_string
+
 def check_genre_exists(value: str, genre_list: List[str], use_all_genres: bool) -> bool:
     '''
     Returns true if any genre from list is also in the given string.
